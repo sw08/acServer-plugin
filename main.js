@@ -36,4 +36,4 @@ client.on('message', (msg, info) => {
             console.log(`Cuts: ${br.readbyte()}`);
     }
 });
-client.bind(12000);
+client.bind(9600);
