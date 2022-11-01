@@ -59,15 +59,14 @@ client.on('message', (msg, info) => {
             br.position += 4
             cut = br.readbyte();
             console.log(`Cuts: ${cut}`);
-            if (cut === 0) {
-                if (lap < db.bestlap || true) {
+            if (cut === '0') {
+                if (lap < db.bestlap) {
                     car = cars[car_id]
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap / 100}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
                     buf.write(text)
                     client.send(buf, 0, buf.length);
-                    console.log('BestLAP!')
                 }
             }
         case pids.SESSION_INFO:
