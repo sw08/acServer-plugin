@@ -75,4 +75,5 @@ client.on('message', (msg, info) => {
     }
     writeFile(`d/a.txt`, a);
 });
-client.bind();
+client.bind(12001);
+client.connect(port=12000, address='localhost');
