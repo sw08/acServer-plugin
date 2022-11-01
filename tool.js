@@ -8,18 +8,36 @@ class byteReader {
         return this.byte[this.position++];
     }
 
-    readbytes() {
+    readstring() {
+        const length = this.readbyte();
+        this.position += length;
+        return this.byte.slice(this.position - length, this.position).toString('utf-8');
+    }
+
+    readstringw() {
         const length = this.readbyte();
         this.position += length * 4;
-        return this.byte.slice(this.position - length * 4, this.position);
+        return this.byte.slice(this.position - length * 4, this.position).toString('utf-8');
     }
 
-    readstring() {
-        return this.readbyte().toString('utf-8');
+    fakeRs() {
+        this.position += this.readbyte();
     }
+    
+    fakeRsw() {
+        this.position += this.readbyte() * 4;
+    }
+}
 
-    readstrings() {
-        return this.readbytes().toString('utf-8');
+class DB {
+    init(track) {
+        // load the database
+        this.track = track
+        this.bestlap = 0; // ge the bestlap from the database
+    }
+    set_bestlap(car_model, user_guid, laptime, user) {
+        // refresh the best lap
+        this.bestlap = _.copyDeel(laptime);
     }
 }
 
@@ -58,5 +76,6 @@ module.exports = {
         RESTART_SESSION: 208,
         ADMIN_COMMAND: 209, // Send message plus a stringW with the command
     },
-    byteReader: byteReader
+    byteReader: byteReader,
+    DB: DB
 }
