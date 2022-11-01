@@ -4,7 +4,7 @@ const tool = require('./tool.js');
 const { readFileSync } = require('fs');
 const ini = require('ini');
 
-const db = tool.DB();
+const db = new tool.DB();
 const pids = tool.pids;
 const br = new tool.byteReader();
 
