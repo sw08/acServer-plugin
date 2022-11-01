@@ -29,36 +29,36 @@ client.on('message', (msg, info) => {
     var packet_id = br.readbyte();
     switch (packet_id) {
         case pids.NEW_SESSION:
-            console.log('NEW SESSION INITIALIZED');
+            console.log('\nNEW SESSION INITIALIZED\n\n');
             break;
         case pids.NEW_CONNECTION:
-            console.log('NEW CONNECTION INITIALIZED');
+            console.log('\nNEW CONNECTION INITIALIZED');
             user_name = br.readstringw();
             user_guid = br.readstringw();
             car_id = br.readbyte();
             car_model = br.readstring();
             console.log(`User GUID: ${user_guid}`);
-            console.log(`Car ID: ${car_id}, Car Model: ${car_model}`);
+            console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
             cars[car_id] = {guid: user_guid, model: car_model, user: user_name};
             break;
         case pids.CONNECTION_CLOSED:
             br.readstringw();
-            console.log('CONNECTION CLOSED');
+            console.log('\nCONNECTION CLOSED');
             user_guid = br.readstringw()
             console.log(`User GUID: ${user_guid}`);
             car_id = br.readbyte();
-            console.log(`Car Model: ${br.readstring()}`);
+            console.log(`Car Model: ${br.readstring()}\n\n`);
             cars.remove(car_id);
             break;
         case pids.LAP_COMPLETED:
-            console.log('LAP COMPLETED');
+            console.log('\nLAP COMPLETED');
             car_id = br.readbyte();
             console.log(`Car ID: ${car_id}`);
             lap = br.byte.readUInt32LE();
             console.log(`Laptime: ${lap}`);
             br.position += 4
             cut = br.readbyte();
-            console.log(`Cuts: ${cut}`);
+            console.log(`Cuts: ${cut}\n\n`);
             if (cut === '0') {
                 if (lap < db.bestlap) {
                     car = cars[car_id]
