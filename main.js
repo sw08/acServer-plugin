@@ -73,6 +73,6 @@ client.on('message', (msg, info) => {
             br.position += 4
             br.position += br.readbyte() * 4
     }
-    writeFile(`${Date.now()}.txt`, a);
+    writeFile(`d/${Date.now()}.txt`, a);
 });
 client.bind();
