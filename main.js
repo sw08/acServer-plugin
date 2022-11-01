@@ -12,6 +12,7 @@ const client = udp.createSocket('udp4');
 
 var user_guid = undefined;
 var user_name = undefined;
+var car = undefined;
 var car_id = undefined;
 var car_model = undefined;
 var cut = undefined;
@@ -59,13 +60,14 @@ client.on('message', (msg, info) => {
             cut = br.readbyte();
             console.log(`Cuts: ${cut}`);
             if (cut === 0) {
-                if (lap < db.bestlap) {
-                    var car = cars[car_id]
+                if (lap < db.bestlap || true) {
+                    car = cars[car_id]
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap / 100}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
                     buf.write(text)
                     client.send(buf, 0, buf.length);
+                    console.log('BestLAP!')
                 }
             }
         case pids.SESSION_INFO:
