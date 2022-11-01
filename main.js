@@ -8,7 +8,7 @@ const db = new tool.DB();
 const pids = tool.pids;
 const br = new tool.byteReader();
 
-const track = ini.parse(readFileSync('../Steam/steamapps/common/Assetto Corsa Dedicated Server/cfg/server_cfg.ini')).SERVER.TRACK;
+const track = 'ddddddd';
 
 const client = udp.createSocket('udp4');
 
