@@ -8,21 +8,19 @@ const db = new tool.DB();
 const pids = tool.pids;
 const br = new tool.byteReader();
 
-const track = 'ddddddd';
-
 const client = udp.createSocket('udp4');
 
+var user_guid = undefined;
+var user_name = undefined;
+var car_id = undefined;
+var car_model = undefined;
+var cut = undefined;
+var track = undefined;
+var lap = undefined;
+var buf = undefined;
 var cars = {};
 
 db.init(track);
-
-var user_guid = '';
-var user_name = '';
-var car_id = '';
-var car_model = '';
-var cut = 1;
-var lap = 0;
-var buf = undefined;
 
 client.on('message', (msg, info) => {
     console.log(msg);
@@ -67,7 +65,7 @@ client.on('message', (msg, info) => {
                     text = `${car.user} made the best lap: ${lap / 100}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
                     buf.write(text)
-                    client.send(buf, 0, buf.length, 12000, 'localhost')
+                    client.send(buf, 0, buf.length);
                 }
             }
         case pids.SESSION_INFO:
