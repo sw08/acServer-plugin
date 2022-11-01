@@ -75,4 +75,4 @@ client.on('message', (msg, info) => {
             br.position += br.readbyte() * 4
     }
 });
-client.bind(12000);
+client.bind();
