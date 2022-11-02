@@ -37,7 +37,7 @@ class DB {
     }
     set_bestlap(car_model, user_guid, laptime, user) {
         // refresh the best lap
-        this.bestlap = _.copyDeel(laptime);
+        this.bestlap = laptime;
     }
 }
 
