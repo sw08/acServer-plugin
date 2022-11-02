@@ -65,7 +65,7 @@ client.on('message', (msg, info) => {
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
-                    buf.write(string=text, encoding='utf32')
+                    buf.write(string=text, encoding='utf-32')
                     console.log(text);
                     client.send(buf);
                 }
