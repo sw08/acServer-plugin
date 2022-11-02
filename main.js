@@ -24,7 +24,8 @@ var cars = {};
 db.init(track);
 
 client.on('message', (msg, info) => {
-    console.log('d');
+    console.log(db.bestlap);
+    db.bestlap++;
     br.reset(msg);
     var packet_id = br.readbyte();
     switch (packet_id) {
