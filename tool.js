@@ -33,7 +33,7 @@ class DB {
     init(track) {
         // load the database
         this.track = track
-        this.bestlap = 23004570; // ge the bestlap from the database
+        this.bestlap = 2300000004570; // ge the bestlap from the database
     }
     set_bestlap(car_model, user_guid, laptime, user) {
         // refresh the best lap
