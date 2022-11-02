@@ -62,6 +62,7 @@ client.on('message', (msg, info) => {
             if (cut == 0) {
                 console.log('No cut')
                 if (lap < db.bestlap) {
+                    console.log(cars)
                     car = cars[car_id]
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap / 100}`
