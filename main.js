@@ -63,11 +63,11 @@ client.on('message', (msg, info) => {
                     console.log(db.cars)
                     car = db.cars[car_id]
                     db.set_bestlap(car.model, car.guid, lap, car.user);
-                    text = `${car.user} made the best lap: ${lap / 100}`
+                    text = `${car.user} made the best lap: ${lap}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
-                    buf.write(text)
-                    client.send(buf);
+                    buf.write(string=text, encoding='utf32')
                     console.log(text);
+                    client.send(buf);
                 }
             }
         case pids.SESSION_INFO:
