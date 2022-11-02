@@ -61,7 +61,7 @@ client.on('message', (msg, info) => {
             if (cut == 0) {
                 console.log('No cut')
                 if (lap < db.bestlap) {
-                    car = db.get_car(car_id);
+                    car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
