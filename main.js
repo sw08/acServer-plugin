@@ -54,7 +54,7 @@ client.on('message', (msg, info) => {
             console.log('\nLAP COMPLETED');
             car_id = br.readbyte();
             console.log(`Car ID: ${car_id}`);
-            lap = br.byte.readUInt32LE();
+            lap = br.byte.readUInt32LE(1);
             console.log(`Laptime: ${lap}`);
             br.position += 4
             cut = br.readbyte();
