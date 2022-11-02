@@ -25,6 +25,7 @@ db.init(track);
 client.on('message', (msg, info) => {
     br.reset(msg);
     var packet_id = br.readbyte();
+    console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
@@ -60,7 +61,6 @@ client.on('message', (msg, info) => {
             if (cut == 0) {
                 console.log('No cut')
                 if (lap < db.bestlap) {
-                    console.log(db.cars);
                     car = db.get_car(car_id);
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap}`
