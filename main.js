@@ -1,7 +1,8 @@
 const udp = require('dgram');
 const buffer = require('buffer');
 const tool = require('./tool.js');
-const { readFileSync, writeFile } = require('fs');
+const { readFileSync } = require('fs');
+const ini = require('ini');
 
 const db = new tool.DB();
 const pids = tool.pids;
@@ -23,42 +24,41 @@ var cars = {};
 db.init(track);
 
 client.on('message', (msg, info) => {
-    var a = '';
-    // a += msg);
+    console.log('d');
     br.reset(msg);
     var packet_id = br.readbyte();
     switch (packet_id) {
         case pids.NEW_SESSION:
-            a += '\nNEW SESSION INITIALIZED\n\n';
+            console.log('\nNEW SESSION INITIALIZED\n\n');
             break;
         case pids.NEW_CONNECTION:
-            a += '\nNEW CONNECTION INITIALIZED\n';
+            console.log('\nNEW CONNECTION INITIALIZED');
             user_name = br.readstringw();
             user_guid = br.readstringw();
             car_id = br.readbyte();
             car_model = br.readstring();
-            a += `User GUID: ${user_guid}\n`;
-            a += `Car ID: ${car_id}, Car Model: ${car_model}\n\n`;
+            console.log(`User GUID: ${user_guid}`);
+            console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
             cars[car_id] = {guid: user_guid, model: car_model, user: user_name};
             break;
         case pids.CONNECTION_CLOSED:
             br.readstringw();
-            a += '\nCONNECTION CLOSED\n';
+            console.log('\nCONNECTION CLOSED');
             user_guid = br.readstringw()
-            a += `User GUID: ${user_guid}\n`;
+            console.log(`User GUID: ${user_guid}`);
             car_id = br.readbyte();
-            a += `Car Model: ${br.readstring()}\n\n`;
+            console.log(`Car Model: ${br.readstring()}\n\n`);
             cars.remove(car_id);
             break;
         case pids.LAP_COMPLETED:
-            a += '\nLAP COMPLETED\n';
+            console.log('\nLAP COMPLETED');
             car_id = br.readbyte();
-            a += `Car ID: ${car_id}\n`;
+            console.log(`Car ID: ${car_id}`);
             lap = br.byte.readUInt32LE();
-            a += `Laptime: ${lap}\n`;
+            console.log(`Laptime: ${lap}`);
             br.position += 4
             cut = br.readbyte();
-            a += `Cuts: ${cut}\n\n`;
+            console.log(`Cuts: ${cut}\n\n`);
             if (cut === '0') {
                 if (lap < db.bestlap) {
                     car = cars[car_id]
@@ -73,7 +73,5 @@ client.on('message', (msg, info) => {
             br.position += 4
             br.position += br.readbyte() * 4
     }
-    writeFile(`d/a.txt`, a);
 });
 client.bind(12001);
-client.connect(port=12000, address='localhost');
