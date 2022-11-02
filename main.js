@@ -66,7 +66,7 @@ client.on('message', (msg, info) => {
                     text = `${car.user} made the best lap: ${lap / 100}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
                     buf.write(text)
-                    client.send(buf, 0, buf.length);
+                    client.send(buf);
                     console.log(text);
                 }
             }
