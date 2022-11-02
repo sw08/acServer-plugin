@@ -34,6 +34,7 @@ class DB {
         // load the database
         this.track = track
         this.bestlap = 2300000004570; // ge the bestlap from the database
+        this.cars = {}
     }
     set_bestlap(car_model, user_guid, laptime, user) {
         // refresh the best lap

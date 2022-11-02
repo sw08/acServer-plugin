@@ -19,13 +19,10 @@ var cut = undefined;
 var track = undefined;
 var lap = undefined;
 var buf = undefined;
-var cars = {};
 
 db.init(track);
 
 client.on('message', (msg, info) => {
-    console.log(db.bestlap);
-    db.bestlap++;
     br.reset(msg);
     var packet_id = br.readbyte();
     switch (packet_id) {
@@ -40,7 +37,7 @@ client.on('message', (msg, info) => {
             car_model = br.readstring();
             console.log(`User GUID: ${user_guid}`);
             console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
-            cars[car_id] = {guid: user_guid, model: car_model, user: user_name};
+            db.cars[car_id] = {guid: user_guid, model: car_model, user: user_name};
             break;
         case pids.CONNECTION_CLOSED:
             br.readstringw();
@@ -49,7 +46,7 @@ client.on('message', (msg, info) => {
             console.log(`User GUID: ${user_guid}`);
             car_id = br.readbyte();
             console.log(`Car Model: ${br.readstring()}\n\n`);
-            delete cars[car_id];
+            delete db.cars[car_id];
             break;
         case pids.LAP_COMPLETED:
             console.log('\nLAP COMPLETED');
@@ -63,8 +60,8 @@ client.on('message', (msg, info) => {
             if (cut == 0) {
                 console.log('No cut')
                 if (lap < db.bestlap) {
-                    console.log(cars)
-                    car = cars[car_id]
+                    console.log(db.cars)
+                    car = db.cars[car_id]
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap / 100}`
                     buf = Buffer.from([pids.BROADCAST_CHAT, text.length])
