@@ -40,7 +40,7 @@ class DB {
         // refresh the best lap
         this.bestlap = laptime;
     }
-    add_car(car_id, user_guid, model, user_name) {
+    add_car(car_id, user_guid, car_model, user_name) {
         this.cars[car_id] = {guid: user_guid, model: car_model, user: user_name};
     }
     remove_car(car_id) {
