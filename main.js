@@ -48,7 +48,7 @@ client.on('message', (msg, info) => {
             console.log(`User GUID: ${user_guid}`);
             car_id = br.readbyte();
             console.log(`Car Model: ${br.readstring()}\n\n`);
-            cars.remove(car_id);
+            delete cars[car_id];
             break;
         case pids.LAP_COMPLETED:
             console.log('\nLAP COMPLETED');
