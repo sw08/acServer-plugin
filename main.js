@@ -1,7 +1,7 @@
 const udp = require('dgram');
 const buffer = require('buffer');
 const tool = require('./tool.js');
-const { readFileSync, writeFile, write } = require('fs');
+const { readFileSync, writeFile } = require('fs');
 
 const db = new tool.DB();
 const pids = tool.pids;
