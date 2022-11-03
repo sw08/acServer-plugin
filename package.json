@@ -2,6 +2,7 @@
   "dependencies": {
     "dgram": "^1.0.1",
     "ini": "^3.0.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "smart-buffer": "^4.2.0"
   }
 }

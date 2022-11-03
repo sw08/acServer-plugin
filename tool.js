@@ -1,26 +1,18 @@
-class byteReader {
-    reset(byte) {
-        this.byte = byte;
-        this.position = 0;
+const buffer = require('smart-buffer').SmartBuffer;
+
+class byteReader extends buffer{
+    readString() {
+        return this.readString(this.readUInt8());
     }
-    readbyte() {
-        return this.byte[this.position++];
+    readStringW() {
+        return this.readString(this.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '')
     }
-    readstring() {
-        const length = this.readbyte();
-        this.position += length;
-        return this.byte.slice(this.position - length, this.position).toString('utf-8');
-    }
-    readstringw() {
-        const length = this.readbyte();
-        this.position += length * 4;
-        return this.byte.slice(this.position - length * 4, this.position).toString('utf-8');
-    }
-    fakeRs(n=1) {
-        this.position += n;
-    }
-    fakeRsw() {
-        this.position += this.readbyte() * 4 + 1;
+    writeStringW(str) {
+        str = ('' + str).slice(0, 255)
+        const buf = buffer.fromSize((str.length * 4) + 1)
+        buf.writeUInt8(str.length, 0)
+        buf.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le')
+        return buf.toBuffer()
     }
 }
 
