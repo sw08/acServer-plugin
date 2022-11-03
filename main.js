@@ -77,7 +77,7 @@ client.on('message', (msg, info) => {
             br.fakeRsw();
             track = br.readstring();
             db.set_track(track);
-            console.log(track);
+            console.log(`${track} track`);
     }
 });
 client.bind(12001);
