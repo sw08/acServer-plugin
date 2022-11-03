@@ -50,7 +50,6 @@ class DB {
     }
 }
 
-
 module.exports = {
     pids: {
         NEW_SESSION: 50,

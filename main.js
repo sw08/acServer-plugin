@@ -82,5 +82,5 @@ client.on('message', (msg, info) => {
 });
 client.bind(12001);
 
-buf = Buffer.from([pids.GET_SESSION_INFO, 0x00, -0x01]);
+buf = Buffer.from([pids.GET_SESSION_INFO, 0xFF, 0xFF]);
 client.send(buf, 12000, '127.0.0.1');
