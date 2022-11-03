@@ -19,9 +19,8 @@ class byteReader {
     fakeRs(n=1) {
         this.position += n;
     }
-    ;
     fakeRsw() {
-        this.position += this.readbyte() * 4;
+        this.position += this.readbyte() * 4 + 1;
     }
 }
 
