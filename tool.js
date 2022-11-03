@@ -1,21 +1,20 @@
-const buffer = require('smart-buffer');
+const buffer = require('smart-buffer').SmartBuffer;
 
-var byteReader = {};
-byteReader.prototype = buffer.SmartBuffer;
-byteReader.prototype.readString = function () {
-    return this.readString(this.readUInt8());
+class byteReader{
+    readString(buf) {
+        return buf.readString(buf.readUInt8());
+    }
+    readStringW(buf) {
+        return buf.readString(buf.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '')
+    }
+    writeStringW(str) {
+        str = ('' + str).slice(0, 255)
+        const packet = buffer.fromSize((str.length * 4) + 1)
+        packet.writeUInt8(str.length, 0)
+        packet.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le')
+        return packet.toBuffer()
+    }
 }
-byteReader.prototype.readStringW = function () {
-    return this.readString(this.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '')
-}
-byteReader.prototype.writeStringW = function (str) {
-    str = ('' + str).slice(0, 255)
-    const buf = buffer.fromSize((str.length * 4) + 1)
-    buf.writeUInt8(str.length, 0)
-    buf.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le')
-    return buf.toBuffer()
-}
-
 
 class DB {
     init() {
