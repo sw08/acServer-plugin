@@ -19,10 +19,10 @@ var car_model = undefined;
 var cut = undefined;
 var lap = undefined;
 
-db.init(track);
+db.init();
 
 client.on('message', (msg, info) => {
-    const br = buffer.fromBuffer(msg);
+    const br = buf.fromBuffer(msg);
     const packet_id = br.readUInt8();
     if (db.track == undefined && packet_id !== pids.SESSION_INFO) return;
     console.log(db.cars);
