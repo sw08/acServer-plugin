@@ -3,7 +3,7 @@ const Buffer = require('buffer').Buffer;
 const tool = require('./tool.js');
 const { readFileSync } = require('fs');
 const ini = require('ini');
-const iconv = new require('iconv').Iconv('UTF-8', 'UTF-32');
+const iconv = new require('iconv-lite');
 
 const db = new tool.DB();
 const pids = tool.pids;
@@ -65,8 +65,8 @@ client.on('message', (msg, info) => {
                     car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} made the best lap: ${lap}`
-                    buf = Buffer.from([pids.BROADCAST_CHAT])
-                    buf.write(iconv.convert(text))
+                    converted = iconv.encode(text, 'UTF-32');
+                    buf = Buffer.from([pids.BROADCAST_CHAT, converted.length, converted])
                     console.log(text);
                     client.send(buf);
                 }
