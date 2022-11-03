@@ -1,9 +1,5 @@
 const udp = require('dgram');
-var buf = require('smart-buffer').SmartBuffer;
 const tool = require('./tool.js');
-const { readFileSync } = require('fs');
-const ini = require('ini');
-const iconv = new require('iconv-lite');
 
 const db = new tool.DB();
 const pids = tool.pids;
@@ -22,41 +18,41 @@ var lap = undefined;
 db.init();
 
 client.on('message', (msg, info) => {
-    const br = buf.fromBuffer(msg);
-    const packet_id = br.readUInt8();
+    const buf = br.fromBuffer(msg);
+    const packet_id = buf.readUInt8();
     if (db.track == undefined && packet_id !== pids.SESSION_INFO) return;
     console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
-            break;
+            bufeak;
         case pids.NEW_CONNECTION:
             console.log('\nNEW CONNECTION INITIALIZED');
-            user_name = br.readStringW();
-            user_guid = br.readStringW();
-            car_id = br.readUInt8();
-            car_model = br.readString();
+            user_name = buf.readStringW();
+            user_guid = buf.readStringW();
+            car_id = buf.readUInt8();
+            car_model = buf.readString();
             console.log(`User GUID: ${user_guid}`);
             console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
             db.add_car(car_id, user_guid, car_model, user_name);
-            break;
+            bufeak;
         case pids.CONNECTION_CLOSED:
-            br.readStringW();
+            buf.readStringW();
             console.log('\nCONNECTION CLOSED');
-            user_guid = br.readStringW();
+            user_guid = buf.readStringW();
             console.log(`User GUID: ${user_guid}`);
-            car_id = br.readUInt8();
-            console.log(`Car Model: ${br.readString()}\n\n`);
+            car_id = buf.readUInt8();
+            console.log(`Car Model: ${buf.readString()}\n\n`);
             db.remove_car(car_id);
-            break;
+            bufeak;
         case pids.LAP_COMPLETED:
             console.log('\nLAP COMPLETED');
-            car_id = br.readUInt8();
+            car_id = buf.readUInt8();
             console.log(`Car ID: ${car_id}`);
-            lap = br.byte.readUInt32LE(1);
+            lap = buf.byte.readUInt32LE(1);
             console.log(`Laptime: ${lap}`);
-            br.position += 4;
-            cut = br.readUInt8();
+            buf.position += 4;
+            cut = buf.readUInt8();
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
                 console.log('No cut');
@@ -64,16 +60,16 @@ client.on('message', (msg, info) => {
                     car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     const text = `${car.user} recorded the fastest lap with ${car.model} / ${lap}`;
-                    const temp = br.writeStringW(text);
+                    const temp = buf.writeStringW(text);
                     const packet = buffer.fromSize(temp.length + 1);
-                    packet.writeUInt8(pids.BROADCAST_CHAT, 0);
+                    packet.writeUInt8(pids.bufOADCAST_CHAT, 0);
                     packet.writeBuffer(temp, 1)
                     client.send(packet.toBuffer(), 12000, '127.0.0.1');
                 }
             }
-            break;
+            bufeak;
         case pids.SESSION_INFO:
-            const track = br.readString(br.readUInt8(4) * 4);
+            const track = buf.readString(buf.readUInt8(4) * 4);
             db.set_track(track);
             console.log(`${track} track`);
     }
