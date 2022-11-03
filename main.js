@@ -3,7 +3,7 @@ const tool = require('./tool.js');
 
 const db = new tool.DB();
 const pids = tool.pids;
-const br = new tool.byteReader();
+const br = tool.byteReader;
 
 const client = udp.createSocket('udp4');
 
