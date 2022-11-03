@@ -66,7 +66,7 @@ client.on('message', (msg, info) => {
                     car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
                     text = `${car.user} recorded the fastest lap with ${car.model} / ${lap}`;
-                    converted = iconv.encode(text, 'UTF-32LE');
+                    converted = Buffer.from(iconv.encode(text, 'UTF-32LE'));
                     buf = Buffer.from([pids.BROADCAST_CHAT, converted.length, converted]);
                     client.send(buf, 12000, '127.0.0.1');
                 }
