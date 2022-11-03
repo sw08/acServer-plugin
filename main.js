@@ -68,7 +68,7 @@ client.on('message', (msg, info) => {
                     converted = iconv.encode(text, 'UTF-32');
                     buf = Buffer.from([pids.BROADCAST_CHAT, converted.length, converted])
                     console.log(text);
-                    client.send(buf);
+                    client.send(buf, 12000, '127.0.0.1');
                 }
             }
         case pids.SESSION_INFO:
