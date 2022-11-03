@@ -1,6 +1,7 @@
 const udp = require('dgram');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
+const normalBuffer = require('buffer').Buffer;
 const db = new tool.DB();
 const pids = tool.pids;
 const br = new tool.byteReader();
@@ -76,5 +77,7 @@ client.on('message', (msg, info) => {
 });
 client.bind(12001);
 
-br = buffer.from([pids.GET_SESSION_INFO, 0xFF, 0xFF]);
-client.send(br, 12000, '127.0.0.1');
+buf = buffer.fromSize(3);
+buf.writeUInt8(pids.GET_SESSION_INFO);
+buf.writeInt16LE(-1);
+client.send(buf.toBuffer(), 12000, '127.0.0.1');
