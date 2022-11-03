@@ -1,14 +1,14 @@
 const buffer = require('smart-buffer');
 
-var byteReader = undefined;
+var byteReader = {};
 byteReader.prototype = buffer.SmartBuffer;
-byteReader.readString = function () {
+byteReader.prototype.readString = function () {
     return this.readString(this.readUInt8());
 }
-byteReader.readStringW = function () {
+byteReader.prototype.readStringW = function () {
     return this.readString(this.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '')
 }
-byteReader.writeStringW = function (str) {
+byteReader.prototype.writeStringW = function (str) {
     str = ('' + str).slice(0, 255)
     const buf = buffer.fromSize((str.length * 4) + 1)
     buf.writeUInt8(str.length, 0)
