@@ -26,6 +26,7 @@ db.init(track);
 client.on('message', (msg, info) => {
     br.reset(msg);
     var packet_id = br.readbyte();
+    if (db.track == undefined && packet_id !== pids.SESSION_INFO) return;
     console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
@@ -44,11 +45,11 @@ client.on('message', (msg, info) => {
         case pids.CONNECTION_CLOSED:
             br.readstringw();
             console.log('\nCONNECTION CLOSED');
-            user_guid = br.readstringw()
+            user_guid = br.readstringw();
             console.log(`User GUID: ${user_guid}`);
             car_id = br.readbyte();
             console.log(`Car Model: ${br.readstring()}\n\n`);
-            db.remove_car(car_id)
+            db.remove_car(car_id);
             break;
         case pids.LAP_COMPLETED:
             console.log('\nLAP COMPLETED');
@@ -56,24 +57,30 @@ client.on('message', (msg, info) => {
             console.log(`Car ID: ${car_id}`);
             lap = br.byte.readUInt32LE(1);
             console.log(`Laptime: ${lap}`);
-            br.position += 4
+            br.position += 4;
             cut = br.readbyte();
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
-                console.log('No cut')
+                console.log('No cut');
                 if (lap < db.bestlap) {
                     car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
-                    text = `${car.user} made the best lap: ${lap}`
-                    converted = iconv.encode(text, 'UTF-32');
-                    buf = Buffer.from([pids.BROADCAST_CHAT, converted.length, converted])
-                    console.log(text);
+                    text = `${car.user} recorded the fastest lap with ${car.model} / ${lap}`;
+                    converted = iconv.encode(text, 'UTF-32LE');
+                    buf = Buffer.from([pids.BROADCAST_CHAT, converted.length, converted]);
                     client.send(buf, 12000, '127.0.0.1');
                 }
             }
+            break;
         case pids.SESSION_INFO:
-            br.position += 4
-            br.position += br.readbyte() * 4
+            br.fakeRs(4);
+            br.fakeRsw();
+            track = br.readstring();
+            db.set_track(track);
+            console.log(track);
     }
 });
 client.bind(12001);
+
+buf = Buffer.from([pids.GET_SESSION_INFO, 0x00, -0x01]);
+client.send(buf, 12000, '127.0.0.1');
