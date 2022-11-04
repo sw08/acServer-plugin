@@ -14,6 +14,9 @@ var car_id = undefined;
 var car_model = undefined;
 var cut = undefined;
 var lap = undefined;
+var other_car_id = undefined;
+var speed = undefined;
+
 
 db.init();
 
@@ -84,6 +87,27 @@ client.on('message', (msg, info) => {
             br.readStringW(buf);
             user_guid = br.readStringW(buf);
             db.add_car(car_id, user_guid, car_model, user_name);
+            break;
+        case pids.CLIENT_EVENT:
+            ev_type = buf.readUInt8();
+            if (ev_type === pids.CE_COLLISION_WITH_ENV) break;
+            car_id = buf.readUInt8();
+            other_car_id = buf.readUInt8();
+            speed = buf.readFloatLE();
+            var text = `${db.get_car(car_id).user_name} has crashed with you at the speed of ${Math.round(speed * 100) / 100}km/h.`;
+            var temp = br.writeStringW(text);
+            var packet = buffer.fromSize(temp.length + 2);
+            packet.writeUInt8(pids.SEND_CHAT, 0);
+            packet.writeUInt8(other_car_id, 1)
+            packet.writeBuffer(temp, 2);
+            client.send(packet.toBuffer(), 12000, '127.0.0.1');
+            text = `You've crashed with ${db.get_car(other_car_id).user_name} at the speed of ${Math.round(speed * 100) / 100}km/h.`;
+            temp = br.writeStringW(text);
+            packet = buffer.fromSize(temp.length + 2);
+            packet.writeUInt8(pids.SEND_CHAT, 0);
+            packet.writeUInt8(car_id, 1)
+            packet.writeBuffer(temp, 2);
+            client.send(packet.toBuffer(), 12000, '127.0.0.1');
             break;
     }
 });
