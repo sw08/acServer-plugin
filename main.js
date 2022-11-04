@@ -26,6 +26,7 @@ client.on('message', (msg, info) => {
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
+            if (db.track !== undefined) break;
             buf.readUInt8();
             buf.readUInt8();
             buf.readUInt8();
