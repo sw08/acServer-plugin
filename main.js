@@ -60,7 +60,6 @@ client.on('message', (msg, info) => {
             console.log(`Car ID: ${car_id}`);
             lap = buf.readUInt32LE(1);
             console.log(`Laptime: ${lap}`);
-            br.position += 4;
             cut = buf.readUInt8();
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
