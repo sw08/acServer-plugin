@@ -69,7 +69,7 @@ client.on('message', (msg, info) => {
             }
             break;
         case pids.SESSION_INFO:
-            const track = br.readString(buf.readUInt8(4) * 4);
+            const track = br.readString(buf, buf.readUInt8(4) * 4);
             db.set_track(track);
             console.log(`${track} track`);
     }

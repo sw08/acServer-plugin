@@ -1,9 +1,8 @@
 const buffer = require('smart-buffer').SmartBuffer;
-console.log();
 
 class byteReader {
-    readString (buf) {
-        return buf.readString(buf.readUInt8());
+    readString (buf, offset=0) {
+        return buf.readString(buf.readUInt8() + offset);
     }
     readStringW (buf) {
         return buf.readString(buf.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '');
