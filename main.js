@@ -20,7 +20,7 @@ db.init();
 client.on('message', (msg, info) => {
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
-    if (db.track == undefined && packet_id !== pids.SESSION_INFO) return;
+    if (db.track == undefined && packet_id !== pids.NEW_SESSION) return;
     console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
