@@ -26,10 +26,10 @@ client.on('message', (msg, info) => {
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
-            buf.readOffset = 6;
+            buf.readOffset(6);
             var temp = buf.readUInt8() * 4;
             console.log(temp, buf.readOffset);
-            buf.readOffset += temp;
+            buf.readOffset(buf.readOffset + temp);
             temp = buf.readUInt8();
             console.log(temp, buf.readOffset);
             temp = buf.readBuffer(temp);
