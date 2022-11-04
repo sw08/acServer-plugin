@@ -30,7 +30,13 @@ client.on('message', (msg, info) => {
             buf.readUInt8();
             buf.readUInt8();
             buf.readUInt8();
-            const track = buf.readBuffer(buf.readUInt8(buf.readUInt8() * 4 + 1)).toString();
+            var temp = buf.readUInt8() * 4 + 1;
+            console.log(temp);
+            temp = buf.readUInt8(temp);
+            console.log(temp);
+            temp = buf.readBuffer(temp);
+            console.log(temp)
+            const track = temp.toString();
             db.set_track(track);
             console.log(`${track} track`);
             break;
