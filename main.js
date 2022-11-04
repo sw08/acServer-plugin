@@ -1,7 +1,6 @@
 const udp = require('dgram');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
-const normalBuffer = require('buffer').Buffer;
 const db = new tool.DB();
 const pids = tool.pids;
 const br = new tool.byteReader();

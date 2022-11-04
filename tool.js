@@ -1,18 +1,19 @@
 const buffer = require('smart-buffer').SmartBuffer;
+console.log();
 
-class byteReader{
-    readString(buf) {
+class byteReader {
+    readString (buf) {
         return buf.readString(buf.readUInt8());
     }
-    readStringW(buf) {
-        return buf.readString(buf.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '')
+    readStringW (buf) {
+        return buf.readString(buf.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '');
     }
-    writeStringW(str) {
-        str = ('' + str).slice(0, 255)
-        const packet = buffer.fromSize((str.length * 4) + 1)
-        packet.writeUInt8(str.length, 0)
-        packet.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le')
-        return packet.toBuffer()
+    writeStringW (str) {
+        str = ('' + str).slice(0, 255);
+        const packet = buffer.fromSize((str.length * 4) + 1);
+        packet.writeUInt8(str.length, 0);
+        packet.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le');
+        return packet.toBuffer();
     }
 }
 
