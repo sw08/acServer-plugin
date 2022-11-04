@@ -25,6 +25,9 @@ client.on('message', (msg, info) => {
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
+            const track = br.readString(buf, buf.readUInt8(4) * 4);
+            db.set_track(track);
+            console.log(`${track} track`);
             break;
         case pids.NEW_CONNECTION:
             console.log('\nNEW CONNECTION INITIALIZED');
@@ -68,15 +71,6 @@ client.on('message', (msg, info) => {
                 }
             }
             break;
-        case pids.SESSION_INFO:
-            const track = br.readString(buf, buf.readUInt8(4) * 4);
-            db.set_track(track);
-            console.log(`${track} track`);
     }
 });
 client.bind(12001);
-
-buf = buffer.fromSize(3);
-buf.writeUInt8(pids.GET_SESSION_INFO);
-buf.writeInt16LE(-1);
-client.send(buf.toBuffer(), 12000, '127.0.0.1');
