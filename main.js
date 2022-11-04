@@ -30,7 +30,7 @@ client.on('message', (msg, info) => {
             buf.readUInt8();
             buf.readUInt8();
             buf.readUInt8();
-            var temp = buf.readUInt8() * 4 + 1;
+            var temp = buf.readUInt8() * 4;
             console.log(temp);
             temp = buf.readUInt8(temp);
             console.log(temp);
