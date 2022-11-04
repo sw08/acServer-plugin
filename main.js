@@ -31,11 +31,11 @@ client.on('message', (msg, info) => {
             buf.readUInt8();
             buf.readUInt8();
             var temp = buf.readUInt8() * 4;
-            console.log(temp);
+            console.log(temp, buf.readOffset);
             temp = buf.readUInt8(temp);
-            console.log(temp);
+            console.log(temp, buf.readOffset);
             temp = buf.readBuffer(temp);
-            console.log(temp)
+            console.log(temp, buf.readOffset)
             const track = temp.toString();
             db.set_track(track);
             console.log(`${track} track`);
