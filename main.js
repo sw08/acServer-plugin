@@ -21,7 +21,6 @@ client.on('message', (msg, info) => {
     console.log(msg)
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
-    console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
@@ -67,7 +66,7 @@ client.on('message', (msg, info) => {
                 if (lap < db.bestlap) {
                     car = db.get_car(car_id.toString());
                     db.set_bestlap(car.model, car.guid, lap, car.user);
-                    const text = `${car.user} recorded the fastest lap with ${car.model} / ${lap}`;
+                    const text = `${car.user} has recorded the fastest lap with ${car.model} / ${lap}`;
                     const temp = br.writeStringW(text);
                     const packet = buffer.fromSize(temp.length + 1);
                     packet.writeUInt8(pids.BROADCAST_CHAT, 0);
