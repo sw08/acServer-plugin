@@ -18,6 +18,7 @@ var lap = undefined;
 db.init();
 
 client.on('message', (msg, info) => {
+    console.log(msg)
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
     if (db.track == undefined && packet_id !== pids.NEW_SESSION) return;
