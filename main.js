@@ -59,7 +59,7 @@ client.on('message', (msg, info) => {
             console.log('\nLAP COMPLETED');
             car_id = buf.readUInt8();
             console.log(`Car ID: ${car_id}`);
-            lap = buf.readUInt32LE(1);
+            lap = buf.readUInt32LE();
             console.log(`Laptime: ${lap}`);
             cut = buf.readUInt8();
             console.log(`Cuts: ${cut}\n\n`);
