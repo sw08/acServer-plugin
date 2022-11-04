@@ -21,7 +21,6 @@ client.on('message', (msg, info) => {
     console.log(msg)
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
-    if (db.track == undefined && packet_id !== pids.NEW_SESSION) return;
     console.log(db.cars);
     switch (packet_id) {
         case pids.NEW_SESSION:
@@ -77,6 +76,25 @@ client.on('message', (msg, info) => {
                 }
             }
             break;
+        case pids.CAR_INFO:
+            car_id = buf.readUInt8();
+            if (buf.readUInt8() == 0) break;
+            car_model = br.readStringW(buf);
+            br.readStringW(buf);
+            user_name = br.readStringW(buf);
+            br.readStringW(buf);
+            user_guid = br.readStringW(buf);
+            db.add_car(car_id, user_guid, car_model, user_name);
+            break;
     }
 });
 client.bind(12001);
+
+var packet;
+
+for (var i = 0; i < 9; i++) {
+    packet = buffer.fromSize(2)
+    packet.writeUInt8(pids.GET_CAR_INFO);
+    packet.writeUInt8(i);
+    client.send(packet.toBuffer(), 12000, '127.0.0.1');
+}
