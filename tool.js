@@ -4,14 +4,14 @@ class byteReader {
     readString (buf, offset=0) {
         return buf.readString(buf.readUInt8() + offset);
     }
-    readStringW (buf) {
-        return buf.readString(buf.readUInt8() * 4, 'UTF-16LE').replace(/\u0000/gi, '');
+    readStringW (buf, offset=0) {
+        return buf.readString(buf.readUInt8() * 4 + offset, 'UTF-32LE').replace(/\u0000/gi, '');
     }
     writeStringW (str) {
         str = ('' + str).slice(0, 255);
         const packet = buffer.fromSize((str.length * 4) + 1);
         packet.writeUInt8(str.length, 0);
-        packet.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-16le');
+        packet.writeString(str.split('').join('\u0000') + '\u0000', 1, 'utf-32LE');
         return packet.toBuffer();
     }
 }
