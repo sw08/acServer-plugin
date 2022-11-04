@@ -25,7 +25,7 @@ client.on('message', (msg, info) => {
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
-            const track = br.readString(buf, buf.readUInt8(4) * 4);
+            const track = br.readString(buf, buf.readUInt8(4) * 4 + 1);
             db.set_track(track);
             console.log(`${track} track`);
             break;
