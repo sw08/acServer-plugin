@@ -1,7 +1,6 @@
 const buffer = require('smart-buffer').SmartBuffer;
 const fs = require('fs');
 const setting = require('./setting.js');
-const https = require('node:https');
 
 class byteReader {
     readString (buf, offset=0) {
@@ -19,19 +18,50 @@ class byteReader {
     }
 }
 
+function get (path) {
+    var a = undefined;
+    var b = a;
+    fetch(`${setting.path}/${path}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': setting.authorization,
+        }
+    }).then((res) => {
+        b = res.json();
+    })
+    return a;
+}
+function post (path, body) {
+    var a = undefined;
+    var b = a;
+    fetch(`${setting.path}/${path}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': setting.authorization,
+        },
+        body: JSON.stringify(body)
+    }).then((res) => {
+        b = res.json();
+    })
+    return a;
+}
+
 class DB {
     init() {
-        // load the database;
         this.track = undefined;
-        this.cars = {}
-        this.bestlap = 2300000004570; // get the bestlap from the database;
+        this.cars = {};
+        this.best = undefined;
+        this.car_model = undefined;
     }
-    set_bestlap(car_model, user_guid, laptime, user) {
-        // refresh the best lap;
-        this.bestlap = laptime;
+    set_bestlap(user_guid, laptime, user) {
+        const data = {user_guid: user_guid, laptime: laptime, user_name: user, model: this.car_model};
+        post('set_bestlap', data);
+        this.best = data;
     }
-    add_car(car_id, user_guid, car_model, user_name) {
-        this.cars[car_id] = {guid: user_guid, model: car_model, user: user_name}
+    add_car(car_id, user_guid, user_name) {
+        this.cars[car_id] = {guid: user_guid, car_id: car_id, user_name: user_name}
     }
     remove_car(car_id) {
         delete this.cars[car_id];
@@ -39,8 +69,11 @@ class DB {
     get_car(car_id) {
         return this.cars[car_id];
     }
-    set_track(track) {
-        this.track = track;
+    set(key, value) {
+        this[key] = value;
+    }   
+    set_best() {
+        this.best = get(`get_bestlap?car_model=${this.car_model}`);
     }
 }
 
@@ -84,13 +117,6 @@ module.exports = {
         for (const file of files) {
             tracks[file] = JSON.parse(fs.readFileSync(path + '/' + file + '/ui/ui_track.json', 'utf8')).name;
         }
-        console.log(fetch(`${setting.path}/tracks`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': setting.authorization,
-            },
-            body: JSON.stringify(tracks),
-        }).json());
-    }
+        post('tracks', tracks);
+    },
 }

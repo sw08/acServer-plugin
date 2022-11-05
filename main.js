@@ -11,7 +11,6 @@ var user_guid = undefined;
 var user_name = undefined;
 var car = undefined;
 var car_id = undefined;
-var car_model = undefined;
 var cut = undefined;
 var lap = undefined;
 var other_car_id = undefined;
@@ -25,28 +24,28 @@ client.on('message', (msg, info) => {
     console.log(msg)
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
+    if (db.track === undefined && packet_id !== pids.SESSION_INFO) return;
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
-            if (db.track !== undefined) break;
+        case pids.SESSION_INFO:
             buf.readUInt8();
             buf.readUInt8();
             buf.readUInt8();
             buf.readUInt8();
-            br.readStringW(buf)
-            const track = br.readString(buf)
-            db.set_track(track);
-            console.log(`${track} track`);
+            br.readStringW(buf);
+            db.set('track', br.readString(buf));
+            console.log(`${db.track} track`);
             break;
         case pids.NEW_CONNECTION:
             console.log('\nNEW CONNECTION INITIALIZED');
             user_name = br.readStringW(buf);
             user_guid = br.readStringW(buf);
             car_id = buf.readUInt8();
-            car_model = br.readString(buf);
+            br.readString(buf);
             console.log(`User GUID: ${user_guid}`);
-            console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
-            db.add_car(car_id, user_guid, car_model, user_name);
+            console.log(`Car ID: ${car_id}, Car Model: ${db.car_model}\n\n`);
+            db.add_car(car_id, user_guid, user_name);
             break;
         case pids.CONNECTION_CLOSED:
             br.readStringW(buf);
@@ -67,10 +66,10 @@ client.on('message', (msg, info) => {
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
                 console.log('No cut');
-                if (lap < db.bestlap) {
+                if (lap < db.best.laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_bestlap(car.model, car.guid, lap, car.user);
-                    const text = `${car.user} has recorded the fastest lap with ${car.model} / ${lap}`;
+                    db.set_bestlap(car.guid, lap, car.user);
+                    const text = `${car.user} has recorded the fastest lap with ${db.car_model} / ${lap}`;
                     const temp = br.writeStringW(text);
                     const packet = buffer.fromSize(temp.length + 1);
                     packet.writeUInt8(pids.BROADCAST_CHAT, 0);
@@ -81,13 +80,19 @@ client.on('message', (msg, info) => {
             break;
         case pids.CAR_INFO:
             car_id = buf.readUInt8();
-            if (buf.readUInt8() == 0) break;
-            car_model = br.readStringW(buf);
+            if (buf.readUInt8() == 0) {
+                if (car_id === 0) {
+                    db.set_best();
+                    db.set('car_mode', br.readStringW());
+                }
+                break;
+            }
+            br.readStringW(buf);
             br.readStringW(buf);
             user_name = br.readStringW(buf);
             br.readStringW(buf);
             user_guid = br.readStringW(buf);
-            db.add_car(car_id, user_guid, car_model, user_name);
+            db.add_car(car_id, user_guid, user_name);
             break;
         case pids.CLIENT_EVENT:
             ev_type = buf.readUInt8();
