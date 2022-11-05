@@ -17,6 +17,7 @@ var lap = undefined;
 var other_car_id = undefined;
 var speed = undefined;
 
+tool.sendTracks();
 
 db.init();
 

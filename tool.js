@@ -1,4 +1,7 @@
 const buffer = require('smart-buffer').SmartBuffer;
+const fs = require('fs');
+const setting = require('./setting.js');
+const https = require('node:https');
 
 class byteReader {
     readString (buf, offset=0) {
@@ -73,5 +76,21 @@ module.exports = {
         ADMIN_COMMAND: 209, // Send message plus a stringW with the command
     },
     byteReader: byteReader,
-    DB: DB
+    DB: DB,
+    sendTracks: function () {
+        const path = '/home/user/yswysw/Steam/steamapps/common/Assetto Corsa Dedicated Server/content/tracks';
+        const files = fs.readdirSync(path);
+        var tracks = {};
+        for (const file of files) {
+            tracks[file] = JSON.parse(fs.readFileSync(path + '/' + file + '/ui/ui_track.json', 'utf8')).name;
+        }
+        console.log(fetch(`${setting.path}/tracks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': setting.authorization,
+            },
+            body: JSON.stringify(tracks),
+        }).json());
+    }
 }
