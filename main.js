@@ -22,8 +22,6 @@ tool.sendTracks();
 db.init();
 
 client.on('message', (msg, info) => {
-    console.log(msg)
-    console.log(db.cars);
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
     if (db.track === undefined && ![pids.SESSION_INFO, pids.CAR_INFO].includes(packet_id)) return;
