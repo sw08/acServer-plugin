@@ -42,7 +42,7 @@ function post (path, body) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': setting.authorization,
+            'Authorization': setting.authorization.user + '||' + setting.authorization.password,
         },
         body: JSON.stringify(body)
     });
