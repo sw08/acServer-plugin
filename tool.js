@@ -58,11 +58,10 @@ class DB {
     }
     fetch_personalbest (guid) {
         const result = get(`get_personalbest/${this.track}/${this.car_model}/${guid}`);
-        return record == {} ? undefined : record.laptime;
+        return result == {} ? undefined : result.laptime;
     }
     around_me (guid) {
-        const result = get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
-        return record == {} ? undefined : record.laptime;
+        return get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
     }
     set (key, value) {
         this[key] = value;
