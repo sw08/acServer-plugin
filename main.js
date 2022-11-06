@@ -89,7 +89,7 @@ client.on('message', (msg, info) => {
             if (temp == 0) {
                 if (car_id == 0) {
                     db.fetch_trackbest();
-                    db.set('car_model', br.readStringW());
+                    db.set('car_model', br.readStringW(buf));
                 }
                 break;
             }
