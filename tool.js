@@ -131,7 +131,7 @@ module.exports = {
     byteReader: byteReader,
     DB: DB,
     sendTracks: function () {
-        const path = '/home/user/yswysw/Steam/steamapps/common/Assetto Corsa Dedicated Server/content/tracks';
+        const path = '/home/yswysw/Steam/steamapps/common/Assetto Corsa Dedicated Server/content/tracks';
         const files = fs.readdirSync(path);
         var tracks = {};
         for (const file of files) {
