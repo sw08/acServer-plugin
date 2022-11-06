@@ -84,7 +84,9 @@ client.on('message', (msg, info) => {
             break;
         case pids.CAR_INFO:
             car_id = buf.readUInt8();
-            if (buf.readUInt8() == 0) {
+            temp = buf.readUInt8();
+            console.log(temp);
+            if (temp == 0) {
                 if (car_id == 0) {
                     db.fetch_trackbest();
                     db.set('car_model', br.readStringW());
