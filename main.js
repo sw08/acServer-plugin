@@ -23,6 +23,7 @@ db.init();
 
 client.on('message', (msg, info) => {
     console.log(msg)
+    console.log(cars);
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
     if (db.track === undefined && packet_id !== pids.SESSION_INFO) return;
@@ -70,11 +71,11 @@ client.on('message', (msg, info) => {
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
                 console.log('No cut');
-                if (lap < db.trackbest.laptime) {
+                if (lap < db.trackbest.laptime || db.trackbest.laptime === undefined) {
                     car = db.get_car(car_id.toString());
                     db.set_trackbest(car.guid, lap, car.user);
                     tool.broadcastChat(`${car.user} has recorded the fastest lap with ${db.car_model} / ${lap}`, client);
-                } else if (lap < db.get_car(car_id.toString()).laptime) {
+                } else if (lap < db.get_car(car_id).laptime || db.get_car(car_id).laptime === undefined) {
                     car = db.get_car(car_id.toString());
                     db.set_personalbest(car.guid, lap, car.user);
                     tool.sendChat(car.guid, `You've recorded your best laptime with ${db.car_model} / ${lap}`, client);
@@ -112,8 +113,9 @@ client.on('message', (msg, info) => {
             car_id = buf.readUInt8()
             const guid = db.get_car(car_id).user_guid;
             var cmd = br.readStringW(buf);
+            console.log(cmd);
             if (!cmd.startsWith('!')) break;
-            cmd = cmd.slice('!')
+            cmd = cmd.slice('!')[0];
             switch (cmd) {
                 case 'mylaptime':
                 case 'mylap':
