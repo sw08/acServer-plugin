@@ -135,7 +135,12 @@ module.exports = {
         const files = fs.readdirSync(path);
         var tracks = {};
         for (const file of files) {
-            tracks[file] = JSON.parse(fs.readFileSync(path + '/' + file + '/ui/ui_track.json', 'utf8')).name;
+            try {
+                tracks[file] = JSON.parse(fs.readFileSync(path + '/' + file + '/ui/ui_track.json', 'utf8')).name;
+            } catch {
+                tracks[file] = file[0].toUpperCase() + file.slice(1);
+            }
+            
         }
         post('tracks', tracks);
     },
