@@ -87,7 +87,7 @@ client.on('message', (msg, info) => {
             if (buf.readUInt8() == 0) {
                 if (car_id === 0) {
                     db.fetch_trackbest();
-                    db.set('car_mode', br.readStringW());
+                    db.set('car_model', br.readStringW());
                 }
                 break;
             }
