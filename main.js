@@ -150,13 +150,14 @@ client.bind(12001);
 
 var packet;
 
+packet = buffer.fromSize(3);
+packet.writeUInt8(pids.GET_SESSION_INFO);
+packet.writeInt16LE(-1, 1);
+client.send(packet.toBuffer(), 12000, '127.0.0.1');
+
 for (var i = 0; i < 9; i++) {
     packet = buffer.fromSize(2)
     packet.writeUInt8(pids.GET_CAR_INFO);
     packet.writeUInt8(i);
     client.send(packet.toBuffer(), 12000, '127.0.0.1');
 }
-packet = buffer.fromSize(3);
-packet.writeUInt8(pids.GET_SESSION_INFO);
-packet.writeInt16LE(-1, 1);
-client.send(packet.toBuffer(), 12000, '127.0.0.1');
