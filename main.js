@@ -82,9 +82,7 @@ client.on('message', (msg, info) => {
             break;
         case pids.CAR_INFO:
             car_id = buf.readUInt8();
-            temp = buf.readUInt8();
-            console.log(temp);
-            if (temp == 0) {
+            if (buf.readUInt8() == 0) {
                 if (car_id == 0) {
                     db.fetch_trackbest();
                     db.set('car_model', br.readStringW(buf));
@@ -97,7 +95,6 @@ client.on('message', (msg, info) => {
             br.readStringW(buf);
             user_guid = br.readStringW(buf);
             db.add_car(car_id, user_guid, user_name);
-            console.log(user_name, user_guid, car_id);
             break;
         case pids.CLIENT_EVENT:
             ev_type = buf.readUInt8();
