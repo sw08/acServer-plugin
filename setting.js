@@ -1,5 +1,5 @@
 module.exports = {
-    path: 'http://api.yswysw.tech/acServer',
+    path: 'http://api.yswysw.tech:443/acServer',
     authorization: {
         user: 'root',
         password: 'Yswysw051*',
