@@ -97,6 +97,7 @@ client.on('message', (msg, info) => {
             br.readStringW(buf);
             user_guid = br.readStringW(buf);
             db.add_car(car_id, user_guid, user_name);
+            console.log(user_name, user_guid, car_id);
             break;
         case pids.CLIENT_EVENT:
             ev_type = buf.readUInt8();
