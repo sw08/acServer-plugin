@@ -142,6 +142,7 @@ client.on('message', (msg, info) => {
                 case 'am':
                     sendChat(user_guid, 'People Around Your Laptime:', client)
                     sendChat(user_guid, db.around_me(guid), client);
+                    break;
             }
     }
 });
