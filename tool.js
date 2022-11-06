@@ -21,8 +21,7 @@ class byteReader {
 const br = new byteReader();
 
 function get (path) {
-    var a = undefined;
-    var b = a;
+    this.temp = undefined;
     fetch(`${setting.path}/${path}`, {
         method: 'GET',
         headers: {
@@ -30,14 +29,12 @@ function get (path) {
             'Authorization': setting.authorization.user + '||' + setting.authorization.password,
         }
     }).then((res) => {
-        b = res.json();
+        this.temp = res.json();
     })
-    return a;
+    return this.temp;
 }
 
 function post (path, body) {
-    var a = undefined;
-    var b = a;
     fetch(`${setting.path}/${path}`, {
         method: 'POST',
         headers: {
