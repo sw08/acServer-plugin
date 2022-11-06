@@ -27,7 +27,7 @@ function get (path) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': setting.authorization,
+            'Authorization': setting.authorization.user + '||' + setting.authorization.password,
         }
     }).then((res) => {
         b = res.json();
