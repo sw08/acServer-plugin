@@ -1,7 +1,6 @@
 const buffer = require('smart-buffer').SmartBuffer;
 const fs = require('fs');
 const setting = require('./setting.js');
-const br = new byteReader();
 
 class byteReader {
     readString (buf, offset=0) {
@@ -18,6 +17,8 @@ class byteReader {
         return packet.toBuffer();
     }
 }
+
+const br = new byteReader();
 
 function get (path) {
     var a = undefined;
