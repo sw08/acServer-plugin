@@ -60,7 +60,8 @@ class DB {
         this.trackbest = get(`get_trackbest/${this.track}/${this.car_model}`);
     }
     fetch_personalbest (guid) {
-        return get(`get_personalbest/${this.track}/${this.car_model}/${guid}`).laptime || undefined;
+        const record = get(`get_personalbest/${this.track}/${this.car_model}/${guid}`);
+        return record == undefined ? undefined : record.laptime;
     }
     around_me (guid) {
         var result = get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
