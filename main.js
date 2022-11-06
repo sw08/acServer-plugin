@@ -26,7 +26,7 @@ client.on('message', (msg, info) => {
     console.log(db.cars);
     const buf = buffer.fromBuffer(msg);
     const packet_id = buf.readUInt8();
-    if (db.track === undefined && packet_id !== pids.SESSION_INFO) return;
+    if (db.track === undefined && ![pids.SESSION_INFO, CAR_INFO].includes(packet_id)) return;
     switch (packet_id) {
         case pids.NEW_SESSION:
             console.log('\nNEW SESSION INITIALIZED\n\n');
@@ -156,3 +156,7 @@ for (var i = 0; i < 9; i++) {
     packet.writeUInt8(i);
     client.send(packet.toBuffer(), 12000, '127.0.0.1');
 }
+packet = buffer.fromSize(3);
+packet.writeUInt8(pids.GET_SESSION_INFO);
+packet.writeInt16LE(-1, 1);
+client.send(packet.toBuffer(), 12000, '127.0.0.1');
