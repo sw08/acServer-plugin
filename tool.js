@@ -45,54 +45,51 @@ function post (path, body) {
             'Authorization': setting.authorization,
         },
         body: JSON.stringify(body)
-    }).then((res) => {
-        b = res.json();
-    })
-    return a;
+    });
 }
 
 class DB {
-    init() {
+    init () {
         this.track = undefined;
         this.cars = {};
         this.trackbest = undefined;
         this.car_model = undefined;
         this.personalbest = {};
     }
-    fetch_trackbest() {
+    fetch_trackbest () {
         this.trackbest = get(`get_trackbest/${this.track}/${this.car_model}`);
     }
-    fetch_personalbest(guid) {
+    fetch_personalbest (guid) {
         return get(`get_personalbest/${this.track}/${this.car_model}/${guid}`).laptime;
     }
-    around_me(guid) {
+    around_me (guid) {
         var result = get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
         return result;
     }
-    set(key, value) {
+    set (key, value) {
         this[key] = value;
     }
-    set_trackbest(user_guid, laptime, user) {
+    set_trackbest (user_guid, laptime, user) {
         const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
         post('set_trackbest', data);
         this.trackbest = data;
         this.set_personalbest(user_guid, laptime, user);
     }
-    set_personalbest(user_guid, laptime, user) {
+    set_personalbest (user_guid, laptime, user) {
         const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
         post('set_personalbest', data);
         this.cars[user_guid].laptime = laptime;
     }
-    set_username(guid, name) {
+    set_username (guid, name) {
         post('set_username', {name: name, guid: guid});
     } 
-    add_car(car_id, user_guid, user_name) {
+    add_car (car_id, user_guid, user_name) {
         this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid)}
     }
-    remove_car(car_id) {
+    remove_car (car_id) {
         delete this.cars[car_id.toString()];
     }
-    get_car(car_id) {
+    get_car (car_id) {
         return this.cars[car_id.toString()];
     }
 }
