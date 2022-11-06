@@ -1,6 +1,7 @@
 const buffer = require('smart-buffer').SmartBuffer;
 const fs = require('fs');
 const setting = require('./setting.js');
+const br = new byteReader();
 
 class byteReader {
     readString (buf, offset=0) {
@@ -32,6 +33,7 @@ function get (path) {
     })
     return a;
 }
+
 function post (path, body) {
     var a = undefined;
     var b = a;
@@ -52,28 +54,45 @@ class DB {
     init() {
         this.track = undefined;
         this.cars = {};
-        this.best = undefined;
+        this.trackbest = undefined;
         this.car_model = undefined;
+        this.personalbest = {};
     }
-    set_bestlap(user_guid, laptime, user) {
-        const data = {user_guid: user_guid, laptime: laptime, user_name: user, model: this.car_model};
-        post('set_bestlap', data);
-        this.best = data;
+    fetch_trackbest() {
+        this.trackbest = get(`get_trackbest/${this.track}/${this.car_model}`);
     }
-    add_car(car_id, user_guid, user_name) {
-        this.cars[car_id] = {guid: user_guid, car_id: car_id, user_name: user_name}
+    fetch_personalbest(guid) {
+        return get(`get_personalbest/${this.track}/${this.car_model}/${guid}`).laptime;
     }
-    remove_car(car_id) {
-        delete this.cars[car_id];
-    }
-    get_car(car_id) {
-        return this.cars[car_id];
+    around_me(guid) {
+        var result = get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
+        return result;
     }
     set(key, value) {
         this[key] = value;
-    }   
-    set_best() {
-        this.best = get(`get_bestlap?car_model=${this.car_model}`);
+    }
+    set_trackbest(user_guid, laptime, user) {
+        const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
+        post('set_trackbest', data);
+        this.trackbest = data;
+        this.set_personalbest(user_guid, laptime, user);
+    }
+    set_personalbest(user_guid, laptime, user) {
+        const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
+        post('set_personalbest', data);
+        this.cars[user_guid].laptime = laptime;
+    }
+    set_username(guid, name) {
+        post('set_username', {name: name, guid: guid});
+    } 
+    add_car(car_id, user_guid, user_name) {
+        this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid)}
+    }
+    remove_car(car_id) {
+        delete this.cars[car_id.toString()];
+    }
+    get_car(car_id) {
+        return this.cars[car_id.toString()];
     }
 }
 
@@ -119,4 +138,19 @@ module.exports = {
         }
         post('tracks', tracks);
     },
+    sendChat: function(guid, text, client) {
+        const temp = br.writeStringW(text);
+        const packet = buffer.fromSize(temp.length + 2);
+        packet.writeUInt8(pids.SEND_CHAT, 0);
+        packet.writeUInt8(guid, 1);
+        packet.writeBuffer(temp, 2);
+        client.send(packet.toBuffer(), 12000, '127.0.0.1');
+    },
+    broadcastChat: function(text, client) {
+        const temp = br.writeStringW(text);
+        const packet = buffer.fromSize(temp.length + 1);
+        packet.writeUInt8(pids.BROADCAST_CHAT, 0);
+        packet.writeBuffer(temp, 1);
+        client.send(packet.toBuffer(), 12000, '127.0.0.1');
+    }
 }

@@ -1,4 +1,5 @@
 const udp = require('dgram');
+const { sendChat } = require('./tool.js');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
 const db = new tool.DB();
@@ -46,6 +47,9 @@ client.on('message', (msg, info) => {
             console.log(`User GUID: ${user_guid}`);
             console.log(`Car ID: ${car_id}, Car Model: ${db.car_model}\n\n`);
             db.add_car(car_id, user_guid, user_name);
+            tool.sendChat(user_guid, `Welcome!`, client);
+            tool.sendChat(user_guid, `Your best laptime: ${db.cars[car_id].laptime}`, client);
+            db.set_username(user_guid, user_name);
             break;
         case pids.CONNECTION_CLOSED:
             br.readStringW(buf);
@@ -66,15 +70,14 @@ client.on('message', (msg, info) => {
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
                 console.log('No cut');
-                if (lap < db.best.laptime) {
+                if (lap < db.trackbest.laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_bestlap(car.guid, lap, car.user);
-                    const text = `${car.user} has recorded the fastest lap with ${db.car_model} / ${lap}`;
-                    const temp = br.writeStringW(text);
-                    const packet = buffer.fromSize(temp.length + 1);
-                    packet.writeUInt8(pids.BROADCAST_CHAT, 0);
-                    packet.writeBuffer(temp, 1);
-                    client.send(packet.toBuffer(), 12000, '127.0.0.1');
+                    db.set_trackbest(car.guid, lap, car.user);
+                    tool.broadcastChat(`${car.user} has recorded the fastest lap with ${db.car_model} / ${lap}`, client);
+                } else if (lap < db.get_car(car_id.toString()).laptime) {
+                    car = db.get_car(car_id.toString());
+                    db.set_personalbest(car.guid, lap, car.user);
+                    tool.sendChat(car.guid, `You've recorded your best laptime with ${db.car_model} / ${lap}`, client);
                 }
             }
             break;
@@ -82,7 +85,7 @@ client.on('message', (msg, info) => {
             car_id = buf.readUInt8();
             if (buf.readUInt8() == 0) {
                 if (car_id === 0) {
-                    db.set_best();
+                    db.fetch_trackbest();
                     db.set('car_mode', br.readStringW());
                 }
                 break;
@@ -101,20 +104,40 @@ client.on('message', (msg, info) => {
             other_car_id = buf.readUInt8();
             speed = buf.readFloatLE();
             var text = `${db.get_car(car_id).user_name} has crashed with you at the speed of ${Math.round(speed * 100) / 100}km/h.`;
-            var temp = br.writeStringW(text);
-            var packet = buffer.fromSize(temp.length + 2);
-            packet.writeUInt8(pids.SEND_CHAT, 0);
-            packet.writeUInt8(other_car_id, 1)
-            packet.writeBuffer(temp, 2);
-            client.send(packet.toBuffer(), 12000, '127.0.0.1');
+            tool.sendChat(db.get_car(other_car_id).guid, text, client);
             text = `You've crashed with ${db.get_car(other_car_id).user_name} at the speed of ${Math.round(speed * 100) / 100}km/h.`;
-            temp = br.writeStringW(text);
-            packet = buffer.fromSize(temp.length + 2);
-            packet.writeUInt8(pids.SEND_CHAT, 0);
-            packet.writeUInt8(car_id, 1)
-            packet.writeBuffer(temp, 2);
-            client.send(packet.toBuffer(), 12000, '127.0.0.1');
+            tool.sendChat(db.get_car(car_id).guid, text, client);
             break;
+        case pids.CHAT:
+            car_id = buf.readUInt8()
+            const guid = db.get_car(car_id).user_guid;
+            var cmd = br.readStringW(buf);
+            if (!cmd.startsWith('!')) break;
+            cmd = cmd.slice('!')
+            switch (cmd) {
+                case 'mylaptime':
+                case 'mylap':
+                case 'ml':
+                case 'laptime':
+                    sendChat(user_guid, `Your Laptime: ${db.get_car(car_id).laptime}`, client);
+                    break;
+                case 'trackbest':
+                case 'trackbestlap':
+                case 'bestlap':
+                case 'tbl':
+                case 'best':
+                case 'champion':
+                case 'champ':
+                    sendChat(user_guid, `Track Best Laptime: ${db.trackbest.laptime} by ${db.trackbest.user}`, client);
+                    break;
+                case 'aroundme':
+                case 'competitor':
+                case 'competitors':
+                case 'compete':
+                case 'am':
+                    sendChat(user_guid, 'People Around Your Laptime:', client)
+                    sendChat(user_guid, db.around_me(guid), client);
+            }
     }
 });
 client.bind(12001);
