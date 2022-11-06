@@ -58,7 +58,6 @@ class DB {
     }
     fetch_personalbest (guid) {
         const result = get(`get_personalbest/${this.track}/${this.car_model}/${guid}`);
-        console.log(result);
         return result == undefined ? undefined : result.laptime;
     }
     around_me (guid) {
