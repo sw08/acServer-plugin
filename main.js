@@ -16,6 +16,8 @@ var cut = undefined;
 var lap = undefined;
 var other_car_id = undefined;
 var speed = undefined;
+var car_model = undefined;
+
 
 tool.sendTracks();
 
@@ -42,12 +44,12 @@ client.on('message', (msg, info) => {
             user_name = br.readStringW(buf);
             user_guid = br.readStringW(buf);
             car_id = buf.readUInt8();
-            br.readString(buf);
+            car_model = br.readString(buf);
             console.log(`User GUID: ${user_guid}`);
-            console.log(`Car ID: ${car_id}, Car Model: ${db.car_model}\n\n`);
-            db.add_car(car_id, user_guid, user_name);
+            console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
+            db.add_car(car_id, user_guid, user_name, car_model);
             tool.sendChat(user_guid, `Welcome!`, client);
-            tool.sendChat(user_guid, `Your best laptime: ${db.cars[car_id].laptime}`, client);
+            tool.sendChat(user_guid, `Your best laptime: ${db.get_car(car_id).laptime}`, client);
             db.set_username(user_guid, user_name);
             break;
         case pids.CONNECTION_CLOSED:
@@ -71,30 +73,25 @@ client.on('message', (msg, info) => {
                 console.log('No cut');
                 if (db.trackbest === undefined || lap < db.trackbest.laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_trackbest(car.guid, lap, car.user);
-                    tool.broadcastChat(`${car.user} has recorded the fastest lap with ${db.car_model} / ${lap}`, client);
+                    db.set_trackbest(car.guid, lap, car.user, car.car_model);
+                    tool.broadcastChat(`${car.user} has recorded the fastest lap with ${car.car_model} / ${lap}`, client);
                 } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_personalbest(car.guid, lap, car.user);
-                    tool.sendChat(car.guid, `You've recorded your best laptime with ${db.car_model} / ${lap}`, client);
+                    db.set_personalbest(car.guid, lap, car.user, car.car_model);
+                    tool.sendChat(car.guid, `You've recorded your best laptime with ${car.car_model} / ${lap}`, client);
                 }
             }
             break;
         case pids.CAR_INFO:
             car_id = buf.readUInt8();
-            if (buf.readUInt8() == 0) {
-                if (car_id == 0) {
-                    db.fetch_trackbest();
-                    db.set('car_model', br.readStringW(buf));
-                }
-                break;
-            }
-            br.readStringW(buf);
+            if (buf.readUInt8() == 0) break;
+            car_model = br.readStringW(buf);
+            db.fetch_trackbest(car_model);
             br.readStringW(buf);
             user_name = br.readStringW(buf);
             br.readStringW(buf);
             user_guid = br.readStringW(buf);
-            db.add_car(car_id, user_guid, user_name);
+            db.add_car(car_id, user_guid, user_name, car_model);
             break;
         case pids.CLIENT_EVENT:
             ev_type = buf.readUInt8();
@@ -119,7 +116,8 @@ client.on('message', (msg, info) => {
                 case 'mylap':
                 case 'ml':
                 case 'laptime':
-                    sendChat(user_guid, `Your Laptime: ${db.get_car(car_id).laptime}`, client);
+                    temp = db.get_car(car_id).laptime;
+                    sendChat(guid, `Your Laptime: ${temp == undefined ? 'Not Found' : temp}`, client);
                     break;
                 case 'trackbest':
                 case 'trackbestlap':
@@ -128,15 +126,17 @@ client.on('message', (msg, info) => {
                 case 'best':
                 case 'champion':
                 case 'champ':
-                    sendChat(user_guid, `Track Best Laptime: ${db.trackbest.laptime} by ${db.trackbest.user}`, client);
+                    temp = db.trackbest.laptime;
+                    sendChat(guid, `Track Best Laptime: ${temp == undefined ? 'Not Found' : temp + ' by ' + db.trackbest.user}`, client);
                     break;
                 case 'aroundme':
                 case 'competitor':
                 case 'competitors':
                 case 'compete':
                 case 'am':
-                    sendChat(user_guid, 'People Around Your Laptime:', client)
-                    sendChat(user_guid, db.around_me(guid), client);
+                    temp = db.around_me(guid, car_model);
+                    sendChat(guid, 'People Around Your Laptime:', client)
+                    sendChat(guid, temp == '' ? 'Not Found' : temp, client);
                     break;
             }
     }

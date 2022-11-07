@@ -50,38 +50,38 @@ class DB {
         this.track = undefined;
         this.cars = {};
         this.trackbest = undefined;
-        this.car_model = undefined;
         this.personalbest = {};
     }
-    fetch_trackbest () {
-        this.trackbest = get(`get_trackbest/${this.track}/${this.car_model}`);
+    fetch_trackbest (car_model) {
+        this.trackbest = get(`get_trackbest/${this.track}/${car_model}`);
     }
-    fetch_personalbest (guid) {
-        const result = get(`get_personalbest/${this.track}/${this.car_model}/${guid}`);
+    fetch_personalbest (guid, car_model) {
+        const result = get(`get_personalbest/${this.track}/${car_model}/${guid}`);
         return result == undefined ? undefined : result.laptime;
     }
-    around_me (guid) {
-        return get(`around_me/${this.track}/${this.car_model.model}/${guid}`);
+    around_me (guid, car_model) {
+        return get(`around_me/${this.track}/${car_model}/${guid}`);
     }
     set (key, value) {
         this[key] = value;
     }
-    set_trackbest (user_guid, laptime, user) {
-        const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
+    set_trackbest (user_guid, laptime, user, car_model) {
+        const data = {user_guid: user_guid, laptime: laptime, model: car_model, track: this.track};
         post('set_trackbest', data);
         this.trackbest = data;
         this.set_personalbest(user_guid, laptime, user);
     }
-    set_personalbest (user_guid, laptime, user) {
-        const data = {user_guid: user_guid, laptime: laptime, model: this.car_model, track: this.track};
+    set_personalbest (user_guid, laptime, user, car_model) {
+        const data = {user_guid: user_guid, laptime: laptime, model: car_model, track: this.track};
         post('set_personalbest', data);
         this.cars[user_guid].laptime = laptime;
+        this.set_username(user_guid, user);
     }
     set_username (guid, name) {
         post('set_username', {name: name, guid: guid});
     } 
-    add_car (car_id, user_guid, user_name) {
-        this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid)}
+    add_car (car_id, user_guid, user_name, car_model) {
+        this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid, car_model)}
     }
     remove_car (car_id) {
         delete this.cars[car_id.toString()];
