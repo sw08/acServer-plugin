@@ -76,7 +76,7 @@ client.on('message', (msg, info) => {
                     tool.broadcastChat(`${car.user} has recorded the fastest lap with ${car.car_model} / ${lap}`, client);
                 } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_personalbest(car.guid, lap, car.user, car.car_model);
+                    db.set_personalbest(car.guid, lap, car.user, car.car_model, car_id);
                     tool.sendChat(car_id, `You've recorded your best laptime with ${car.car_model} / ${lap}`, client);
                 }
             }

@@ -71,10 +71,10 @@ class DB {
         this.trackbest = data;
         this.set_personalbest(user_guid, laptime, user);
     }
-    set_personalbest (user_guid, laptime, user, car_model) {
+    set_personalbest (user_guid, laptime, user, car_model, car_id) {
         const data = {user_guid: user_guid, laptime: laptime, model: car_model, track: this.track};
         post('set_personalbest', data);
-        this.cars[user_guid].laptime = laptime;
+        this.get_car(car_id).laptime = laptime;
         this.set_username(user_guid, user);
     }
     set_username (guid, name) {
