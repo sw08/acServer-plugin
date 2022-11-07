@@ -141,7 +141,7 @@ module.exports = {
     sendChat: function(guid, text, client) {
         const temp = br.writeStringW(text);
         const packet = buffer.fromSize(temp.length + 2);
-        packet.writeUInt8(pids.SEND_CHAT, 0);
+        packet.writeUInt8(this.pids.SEND_CHAT, 0);
         packet.writeUInt8(guid, 1);
         packet.writeBuffer(temp, 2);
         client.send(packet.toBuffer(), 12000, '127.0.0.1');
@@ -149,7 +149,7 @@ module.exports = {
     broadcastChat: function(text, client) {
         const temp = br.writeStringW(text);
         const packet = buffer.fromSize(temp.length + 1);
-        packet.writeUInt8(pids.BROADCAST_CHAT, 0);
+        packet.writeUInt8(this.pids.BROADCAST_CHAT, 0);
         packet.writeBuffer(temp, 1);
         client.send(packet.toBuffer(), 12000, '127.0.0.1');
     }
