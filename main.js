@@ -1,5 +1,4 @@
 const udp = require('dgram');
-const { sendChat } = require('./tool.js');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
 const db = new tool.DB();
@@ -48,8 +47,8 @@ client.on('message', (msg, info) => {
             console.log(`User GUID: ${user_guid}`);
             console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
             db.add_car(car_id, user_guid, user_name, car_model);
-            tool.sendChat(user_guid, `Welcome!`, client);
-            tool.sendChat(user_guid, `Your best laptime: ${db.get_car(car_id).laptime}`, client);
+            tool.sendChat(car_id, `Welcome!`, client);
+            tool.sendChat(car_id, `Your best laptime: ${db.get_car(car_id).laptime}`, client);
             db.set_username(user_guid, user_name);
             break;
         case pids.CONNECTION_CLOSED:
@@ -78,7 +77,7 @@ client.on('message', (msg, info) => {
                 } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     car = db.get_car(car_id.toString());
                     db.set_personalbest(car.guid, lap, car.user, car.car_model);
-                    tool.sendChat(car.guid, `You've recorded your best laptime with ${car.car_model} / ${lap}`, client);
+                    tool.sendChat(car_id, `You've recorded your best laptime with ${car.car_model} / ${lap}`, client);
                 }
             }
             break;
@@ -100,9 +99,9 @@ client.on('message', (msg, info) => {
             other_car_id = buf.readUInt8();
             speed = buf.readFloatLE();
             var text = `${db.get_car(car_id).user_name} has crashed with you at the speed of ${Math.round(speed * 100) / 100}km/h.`;
-            tool.sendChat(db.get_car(other_car_id).guid, text, client);
+            tool.sendChat(other_car_id, text, client);
             text = `You've crashed with ${db.get_car(other_car_id).user_name} at the speed of ${Math.round(speed * 100) / 100}km/h.`;
-            tool.sendChat(db.get_car(car_id).guid, text, client);
+            tool.sendChat(car_id, text, client);
             break;
         case pids.CHAT:
             car_id = buf.readUInt8()
@@ -117,7 +116,7 @@ client.on('message', (msg, info) => {
                 case 'ml':
                 case 'laptime':
                     temp = db.get_car(car_id).laptime;
-                    sendChat(guid, `Your Laptime: ${temp == undefined ? 'Not Found' : temp}`, client);
+                    sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : temp}`, client);
                     break;
                 case 'trackbest':
                 case 'trackbestlap':
@@ -127,7 +126,7 @@ client.on('message', (msg, info) => {
                 case 'champion':
                 case 'champ':
                     temp = db.trackbest.laptime;
-                    sendChat(guid, `Track Best Laptime: ${temp == undefined ? 'Not Found' : temp + ' by ' + db.trackbest.user}`, client);
+                    sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : temp + ' by ' + db.trackbest.user}`, client);
                     break;
                 case 'aroundme':
                 case 'competitor':
@@ -135,8 +134,8 @@ client.on('message', (msg, info) => {
                 case 'compete':
                 case 'am':
                     temp = db.around_me(guid, car_model);
-                    sendChat(guid, 'People Around Your Laptime:', client)
-                    sendChat(guid, temp == '' ? 'Not Found' : temp, client);
+                    sendChat(car_id, 'People Around Your Laptime:', client)
+                    sendChat(car_id, temp == '' ? 'Not Found' : temp, client);
                     break;
             }
     }

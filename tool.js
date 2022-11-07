@@ -138,11 +138,11 @@ module.exports = {
         }
         post('tracks', tracks);
     },
-    sendChat: function(guid, text, client) {
+    sendChat: function(car_id, text, client) {
         const temp = br.writeStringW(text);
         const packet = buffer.fromSize(temp.length + 2);
         packet.writeUInt8(this.pids.SEND_CHAT, 0);
-        packet.writeUInt8(guid, 1);
+        packet.writeUInt8(car_id, 1);
         packet.writeBuffer(temp, 2);
         client.send(packet.toBuffer(), 12000, '127.0.0.1');
     },
