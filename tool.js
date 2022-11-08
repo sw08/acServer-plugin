@@ -65,11 +65,11 @@ class DB {
     set (key, value) {
         this[key] = value;
     }
-    set_trackbest (user_guid, laptime, user, car_model) {
+    set_trackbest (user_guid, laptime, user, car_model, car_id) {
         const data = {user_guid: user_guid, laptime: laptime, model: car_model, track: this.track};
         post('set_trackbest', data);
         this.trackbest = data;
-        this.set_personalbest(user_guid, laptime, user);
+        this.set_personalbest(user_guid, laptime, user, car_model, car_id);
     }
     set_personalbest (user_guid, laptime, user, car_model, car_id) {
         const data = {user_guid: user_guid, laptime: laptime, model: car_model, track: this.track};
