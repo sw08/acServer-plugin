@@ -1,4 +1,5 @@
 const udp = require('dgram');
+const { sendChat } = require('./tool.js');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
 const db = new tool.DB();
@@ -104,12 +105,13 @@ client.on('message', (msg, info) => {
             tool.sendChat(car_id, text, client);
             break;
         case pids.CHAT:
-            car_id = buf.readUInt8()
+            car_id = buf.readUInt8();
+            console.log(car_id);
             const guid = db.get_car(car_id).user_guid;
             var cmd = br.readStringW(buf);
-            console.log(cmd);
             if (!cmd.startsWith('!')) break;
             cmd = cmd.slice('!')[0];
+            console.log(cmd);
             switch (cmd) {
                 case 'mylaptime':
                 case 'mylap':
@@ -137,6 +139,8 @@ client.on('message', (msg, info) => {
                     sendChat(car_id, 'People Around Your Laptime:', client)
                     sendChat(car_id, temp == '' ? 'Not Found' : temp, client);
                     break;
+                default:
+                    sendChat(car_id, '404 Command Not Found', client);
             }
     }
 });
