@@ -81,7 +81,7 @@ class DB {
         post('set_username', {name: name, guid: guid});
     } 
     add_car (car_id, user_guid, user_name, car_model) {
-        this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid, car_model)}
+        this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid, car_model), car_model: car_model}
     }
     remove_car (car_id) {
         delete this.cars[car_id.toString()];
