@@ -152,5 +152,17 @@ module.exports = {
         packet.writeUInt8(this.pids.BROADCAST_CHAT, 0);
         packet.writeBuffer(temp, 1);
         client.send(packet.toBuffer(), 12000, '127.0.0.1');
+    },
+    msToTime: function(time) {
+        const ms = time % 1000;
+        time -= ms
+        time /= 1000;
+        const s = time % 60;
+        time -= s;
+        time /= 60;
+        const m = time % 60;
+        time -= m;
+        time /= 60;
+        return `${time}:${m}:${s}.${ms}`;
     }
 }

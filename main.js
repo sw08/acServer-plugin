@@ -48,7 +48,7 @@ client.on('message', (msg, info) => {
             console.log(`Car ID: ${car_id}, Car Model: ${car_model}\n\n`);
             db.add_car(car_id, user_guid, user_name, car_model);
             tool.sendChat(car_id, `Welcome!`, client);
-            tool.sendChat(car_id, `Your best laptime: ${db.get_car(car_id).laptime}`, client);
+            tool.sendChat(car_id, `Your best laptime: ${tool.msToTime(db.get_car(car_id).laptime)}`, client);
             db.set_username(user_guid, user_name);
             break;
         case pids.CONNECTION_CLOSED:
@@ -73,11 +73,11 @@ client.on('message', (msg, info) => {
                 if (db.trackbest === undefined || lap < db.trackbest.laptime) {
                     car = db.get_car(car_id);
                     db.set_trackbest(car.guid, lap, car.user_name, car.car_model, car_id);
-                    tool.broadcastChat(`${car.user} has recorded the fastest lap with ${car.car_model} / ${lap}`, client);
+                    tool.broadcastChat(`${car.user_name} has recorded the fastest lap with ${car.car_model} / ${tool.msToTime(lap)}`, client);
                 } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     car = db.get_car(car_id.toString());
-                    db.set_personalbest(car.guid, lap, car.user, car.car_model, car_id);
-                    tool.sendChat(car.guid, `You've recorded your best laptime with ${car.car_model} / ${lap}`, client);
+                    db.set_personalbest(car.guid, lap, car.user_name, car.car_model, car_id);
+                    tool.sendChat(car.guid, `You've recorded your best laptime with ${car.car_model} / ${tool.msToTime(lap)}`, client);
                 }
             }
             break;
@@ -116,7 +116,7 @@ client.on('message', (msg, info) => {
                 case 'ml':
                 case 'laptime':
                     temp = db.get_car(car_id).laptime;
-                    sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : temp}`, client);
+                    sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp)}`, client);
                     break;
                 case 'trackbest':
                 case 'trackbestlap':
@@ -126,7 +126,7 @@ client.on('message', (msg, info) => {
                 case 'champion':
                 case 'champ':
                     temp = db.trackbest.laptime;
-                    sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : temp + ' by ' + db.trackbest.user}`, client);
+                    sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp) + ' by ' + db.trackbest.user}`, client);
                     break;
                 case 'aroundme':
                 case 'competitor':
