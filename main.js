@@ -1,5 +1,4 @@
 const udp = require('dgram');
-const { sendChat } = require('./tool.js');
 const tool = require('./tool.js');
 const buffer = require('smart-buffer').SmartBuffer;
 const db = new tool.DB();
@@ -118,7 +117,7 @@ client.on('message', (msg, info) => {
                 case 'ml':
                 case 'laptime':
                     temp = db.get_car(car_id).laptime;
-                    sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp)}`, client);
+                    tool.sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp)}`, client);
                     break;
                 case 'trackbest':
                 case 'trackbestlap':
@@ -128,7 +127,7 @@ client.on('message', (msg, info) => {
                 case 'champion':
                 case 'champ':
                     temp = db.trackbest.laptime;
-                    sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp) + ' by ' + db.trackbest.user}`, client);
+                    tool.sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp) + ' by ' + db.trackbest.user}`, client);
                     break;
                 case 'aroundme':
                 case 'competitor':
@@ -136,11 +135,11 @@ client.on('message', (msg, info) => {
                 case 'compete':
                 case 'am':
                     temp = db.around_me(guid, car_model);
-                    sendChat(car_id, 'People Around Your Laptime:', client)
-                    sendChat(car_id, temp == '' ? 'Not Found' : temp, client);
+                    tool.sendChat(car_id, 'People Around Your Laptime:', client)
+                    tool.sendChat(car_id, temp == '' ? 'Not Found' : temp, client);
                     break;
                 default:
-                    sendChat(car_id, '404 Command Not Found', client);
+                    tool.sendChat(car_id, '404 Command Not Found', client);
             }
     }
 });
