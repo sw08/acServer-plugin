@@ -110,7 +110,7 @@ client.on('message', (msg, info) => {
             const guid = db.get_car(car_id).user_guid;
             var cmd = br.readStringW(buf);
             if (!cmd.startsWith('!')) break;
-            cmd = cmd.slice('!')[1];
+            cmd = cmd.substr(1);
             console.log(cmd);
             switch (cmd) {
                 case 'mylaptime':
