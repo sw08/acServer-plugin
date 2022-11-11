@@ -187,10 +187,10 @@ module.exports = {
         const s = time % 60;
         time -= s;
         time /= 60;
-        return `${time}:${s}.${this.addZero(ms, 3)}`;
+        return `${time}:${this.addZero(s, 2)}.${this.addZero(ms, 3)}`;
     },
     addZero: function (number, count) {
         number = String(number);
-        return '0'.repeat(number.length - count) + number;
+        return '0'.repeat(count - number.length) + number;
     }
 }
