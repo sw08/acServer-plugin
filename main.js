@@ -71,14 +71,14 @@ client.on('message', (msg, info) => {
             console.log(`Cuts: ${cut}\n\n`);
             if (cut == 0) {
                 console.log('No cut');
+                car = db.get_car(car_id);
                 if (db.trackbest === undefined || lap < db.trackbest.laptime) {
-                    car = db.get_car(car_id);
                     db.set_trackbest(car.guid, lap, car.user_name, car.car_model, car_id);
                     tool.broadcastChat(`${car.user_name} has recorded the fastest lap with ${db.get_car_model(car.car_model)} / ${tool.msToTime(lap)}`, client);
-                } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
-                    car = db.get_car(car_id.toString());
+                }
+                if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     db.set_personalbest(car.guid, lap, car.user_name, car.car_model, car_id);
-                    tool.sendChat(car.guid, `You've recorded your best laptime with ${db.get_car_model(car.car_model)} / ${tool.msToTime(lap)}`, client);
+                    tool.sendChat(car_id, `You've recorded your best laptime with ${db.get_car_model(car.car_model)} / ${tool.msToTime(lap)}`, client);
                 }
             }
             break;
