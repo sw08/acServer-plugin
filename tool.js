@@ -51,6 +51,7 @@ class DB {
         this.cars = {};
         this.trackbest = undefined;
         this.personalbest = {};
+        this.car_models = {};
     }
     fetch_trackbest (car_model) {
         this.trackbest = get(`get_trackbest/${this.track}/${car_model}`);
@@ -79,7 +80,18 @@ class DB {
     }
     set_username (guid, name) {
         post('set_username', {name: name, guid: guid});
-    } 
+    }
+    set_car_model (car) {
+        if (!Object.keys(car).includes(car)) {
+            try {
+                const path = '/home/yswysw/server/content/cars';
+                this.car_models[car] = JSON.parse(fs.readFileSync(path + '/' + car + '/ui/ui_car.json', 'utf8')).name;
+            } catch {
+                this.car_models[car] = car[0].toUpperCase() + car.slice(1);
+            }
+        }
+
+    }
     add_car (car_id, user_guid, user_name, car_model) {
         this.cars[car_id.toString()] = {guid: user_guid, car_id: car_id, user_name: user_name, laptime: this.fetch_personalbest(user_guid, car_model), car_model: car_model}
     }
@@ -88,6 +100,9 @@ class DB {
     }
     get_car (car_id) {
         return this.cars[car_id.toString()];
+    }
+    get_car_model (car) {
+        return this.car_models[car]
     }
 }
 
@@ -134,9 +149,21 @@ module.exports = {
             } catch {
                 tracks[file] = file[0].toUpperCase() + file.slice(1);
             }
-            
         }
         post('tracks', tracks);
+    },
+    sendCars: function () {
+        const path = '/home/yswysw/server/content/cars';
+        const files = fs.readdirSync(path);
+        var cars = {};
+        for (const file of files) {
+            try {
+                cars[file] = JSON.parse(fs.readFileSync(path + '/' + file + '/ui/ui_car.json', 'utf8')).name;
+            } catch {
+                cars[file] = file[0].toUpperCase() + file.slice(1);
+            }
+        }
+        post('cars', cars);
     },
     sendChat: function(car_id, text, client) {
         const temp = br.writeStringW(text);

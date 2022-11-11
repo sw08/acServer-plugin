@@ -17,10 +17,10 @@ var other_car_id = undefined;
 var speed = undefined;
 var car_model = undefined;
 
+db.init();
 
 tool.sendTracks();
-
-db.init();
+tool.sendCars();
 
 client.on('message', (msg, info) => {
     const buf = buffer.fromBuffer(msg);
@@ -50,6 +50,7 @@ client.on('message', (msg, info) => {
             tool.sendChat(car_id, `Welcome!`, client);
             tool.sendChat(car_id, `Your best laptime: ${tool.msToTime(db.get_car(car_id).laptime)}`, client);
             db.set_username(user_guid, user_name);
+            db.set_car_model(car_model);
             break;
         case pids.CONNECTION_CLOSED:
             br.readStringW(buf);
@@ -73,11 +74,11 @@ client.on('message', (msg, info) => {
                 if (db.trackbest === undefined || lap < db.trackbest.laptime) {
                     car = db.get_car(car_id);
                     db.set_trackbest(car.guid, lap, car.user_name, car.car_model, car_id);
-                    tool.broadcastChat(`${car.user_name} has recorded the fastest lap with ${car.car_model} / ${tool.msToTime(lap)}`, client);
+                    tool.broadcastChat(`${car.user_name} has recorded the fastest lap with ${db.get_car_model(car.car_model)} / ${tool.msToTime(lap)}`, client);
                 } else if (db.get_car(car_id).laptime === undefined || lap < db.get_car(car_id).laptime) {
                     car = db.get_car(car_id.toString());
                     db.set_personalbest(car.guid, lap, car.user_name, car.car_model, car_id);
-                    tool.sendChat(car.guid, `You've recorded your best laptime with ${car.car_model} / ${tool.msToTime(lap)}`, client);
+                    tool.sendChat(car.guid, `You've recorded your best laptime with ${db.get_car_model(car.car_model)} / ${tool.msToTime(lap)}`, client);
                 }
             }
             break;
@@ -116,6 +117,7 @@ client.on('message', (msg, info) => {
                 case 'mylap':
                 case 'ml':
                 case 'laptime':
+                    console.log(1)
                     temp = db.get_car(car_id).laptime;
                     tool.sendChat(car_id, `Your Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp)}`, client);
                     break;
@@ -126,6 +128,7 @@ client.on('message', (msg, info) => {
                 case 'best':
                 case 'champion':
                 case 'champ':
+                    console.log(2)
                     temp = db.trackbest.laptime;
                     tool.sendChat(car_id, `Track Best Laptime: ${temp == undefined ? 'Not Found' : tool.msToTime(temp) + ' by ' + db.trackbest.user}`, client);
                     break;
@@ -134,11 +137,13 @@ client.on('message', (msg, info) => {
                 case 'competitors':
                 case 'compete':
                 case 'am':
+                    console.log(3)
                     temp = db.around_me(guid, car_model);
                     tool.sendChat(car_id, 'People Around Your Laptime:', client)
                     tool.sendChat(car_id, temp == '' ? 'Not Found' : temp, client);
                     break;
                 default:
+                    console.log(4)
                     tool.sendChat(car_id, '404 Command Not Found', client);
             }
     }
