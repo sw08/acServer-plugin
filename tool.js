@@ -83,7 +83,7 @@ class DB {
         post('set_username', {name: name, guid: guid});
     }
     set_car_model (car) {
-        if (!Object.keys(car).includes(car)) {
+        if (!Object.keys(this.car_models).includes(car)) {
             try {
                 const path = '/home/yswysw/server/content/cars';
                 this.car_models[car] = JSON.parse(fs.readFileSync(path + '/' + car + '/ui/ui_car.json', 'utf8')).name;
